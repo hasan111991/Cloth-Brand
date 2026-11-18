@@ -31,6 +31,7 @@ import {
   User as UserIcon,
   X,
 } from 'lucide-react';
+import { ASSETS, resolveAssetUrl } from '../lib/assets';
 import { db, handleFirestoreError, makeSafeId, OperationType } from '../lib/firebase';
 import {
   formatDate,
@@ -83,9 +84,9 @@ interface StorefrontProps {
   onOpenWizard: () => void;
 }
 
-const FALLBACK_HERO = '/src/assets/images/hero_pakistani_atelier_1795026585328.jpg';
-const FALLBACK_CRAFT = '/src/assets/images/craftsmanship_loom_1795026586550.jpg';
-const FALLBACK_PRODUCT = '/src/assets/images/product_ladies_lawn_1795026585565.jpg';
+const FALLBACK_HERO = ASSETS.heroAtelier;
+const FALLBACK_CRAFT = ASSETS.craftsmanshipLoom;
+const FALLBACK_PRODUCT = ASSETS.productLadiesLawn;
 
 const SafeImage: React.FC<{
   src?: string;
@@ -93,7 +94,8 @@ const SafeImage: React.FC<{
   className?: string;
 }> = ({ src, alt, className = '' }) => {
   const [failed, setFailed] = useState(false);
-  if (!src || failed) {
+  const resolved = resolveAssetUrl(src);
+  if (!resolved || failed) {
     return (
       <div className={`bg-[#EFECE4] flex flex-col items-center justify-center p-6 text-center ${className}`}>
         <Package className="w-8 h-8 text-[#9A7B3E] mb-2 opacity-70" />
@@ -103,7 +105,7 @@ const SafeImage: React.FC<{
   }
   return (
     <img
-      src={src}
+      src={resolved}
       alt={alt}
       referrerPolicy="no-referrer"
       onError={() => setFailed(true)}

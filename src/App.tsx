@@ -108,6 +108,15 @@ export default function App() {
       ? collection(db, 'product_variants')
       : query(collection(db, 'product_variants'), where('active', '==', true));
 
+    const safeListenerError = (path: string) => (err: unknown) => {
+      try {
+        handleFirestoreError(err, OperationType.LIST, path);
+      } catch (structuredErr) {
+        const msg = structuredErr instanceof Error ? structuredErr.message : String(structuredErr);
+        console.warn(`Firestore listener notice (${path}):`, msg);
+      }
+    };
+
     const u1 = onSnapshot(
       catQ,
       (snap) => {
@@ -116,7 +125,7 @@ export default function App() {
           .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
         setCategories(list);
       },
-      (err) => handleFirestoreError(err, OperationType.LIST, 'categories')
+      safeListenerError('categories')
     );
 
     const u2 = onSnapshot(
@@ -127,7 +136,7 @@ export default function App() {
           .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
         setProducts(list);
       },
-      (err) => handleFirestoreError(err, OperationType.LIST, 'products')
+      safeListenerError('products')
     );
 
     const u3 = onSnapshot(
@@ -137,7 +146,7 @@ export default function App() {
           snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<ProductVariant, 'id'>) }))
         );
       },
-      (err) => handleFirestoreError(err, OperationType.LIST, 'product_variants')
+      safeListenerError('product_variants')
     );
 
     return () => {
