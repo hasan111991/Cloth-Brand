@@ -1,0 +1,6 @@
+{
+  "name": "PakAtelier — Clothing E-Commerce & Business OS",
+  "description": "Complete Pakistani clothing e-commerce storefront, dual inventory & supplier procurement, salesman portal, courier management, and accounting platform powered by Firebase.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
